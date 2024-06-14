@@ -1,0 +1,100 @@
+<?php include 'book.php'; ?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+    <title>Library</title>
+    
+    <link rel="stylesheet" href="css/page_style.css">
+
+    <script>
+        const onLoad = () => {
+            document.getElementById("name").innerHTML = sessionStorage.getItem("fullname");
+        }
+    </script>
+
+</head>
+<body onload="onLoad()">
+
+<div class="wrapper">
+    <aside id="sidebar" class="expand">
+        <div class="h-100">
+            <div class="d-flex" id="system-info">
+                <a href="main.html" class="box_icon" type="button">
+                    <i class="fa-solid fa-warehouse"></i>
+                </a>
+                <div class="sidebar-logo">
+                    <a href="main.html">Book Vault System</a>
+                </div>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="main.html" class="sidebar-link">
+                        <i class="fa-solid fa-book"></i>
+                        <span>Library</span>
+                        
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="fa-solid fa-table-list pe-1"></i>
+                        <span>Favorite Books</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <button class="logout-button">
+            <a href="login.html" class="logout-button link-button">
+                <span>Logout</span>
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </button>
+    </aside>
+
+    <div class="main">
+        <nav class="navbar navbar-expand px-3 p-0 border-bottom shadow border-bottom">
+            <div class="navbar-collapse navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <form class="d-flex search-form">
+                            <input class="form-control search-input me-2" type="search" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-outline-success search-button" type="submit">Search</button>
+                        </form>
+                    </li>
+                    <li class="nav-item">
+                        <a id="name" href="profile.html" class="nav-link">
+                            Profile
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="content px-3 py-2">
+            <div class="container-fluid">
+                <div class="row">
+                    <?php foreach ($books as $book): ?>
+                        <div class="col-md-4">
+                            <div class="book">
+                                <h5 class="book-title"><?php echo $book['title']; ?></h5>
+                                <h6 class="book-author"><?php echo $book['author']; ?></h6>
+                                <p class="book-summary"><?php echo $book['summary']; ?></p>
+                                <p class="text-muted"><?php echo $book['genre']; ?></p>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </main>
+        
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlCOv7B2xP6KT6VhZKQFKA/VGPNSxZlNf6A/0oPzVJ+J5XicKpPzo3B4tW6" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cM03K5JdRmsKN/t8FzfGQ1ZXOlGIZ7Wv24e1LYD+47kxR/1D9t8L+BxNk3A2lQA5" crossorigin="anonymous"></script>
+</body>
+</html>

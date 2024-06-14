@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap');
+
+* {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.background-image {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background-image: url("../images/login_bg.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: blur(3px);
+    z-index: -1;
+}
+
+.fix-rounded-right {
+    border-top-right-radius: .2rem !important;
+    border-bottom-right-radius: .2rem !important;
+}
+
+.btn-cust-citrus {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-cust-citrus:hover {
+    background-color: #4c99eb;
+    color: white;
+}
+
+.mt-3 {
+    margin-top: 1rem !important;
+}
+
+.mt-5 {
+    margin-top: 2rem !important;
+}
+
+.link-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: inherit;
+    display: block;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.link-button:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.text-center .link-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
