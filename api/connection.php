@@ -6,11 +6,10 @@ $dbname = "bookvault";
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    // set the PDO error mode to exception
+    // Set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    // echo "Connection Succesful!";
-
-} catch(PDOException $e) {
+    // echo "Connection Successful!";
+} catch (PDOException $e) {
     die("Error: " . $e->getMessage());
 }
 ?>

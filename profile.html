@@ -1,31 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
     <link rel="stylesheet" href="css/profile.css">
+    <script>
+        const onLoad = () => {
+            fetch('fetch_user.php')
+                .then(response => response.json())
+                .then(user => {
+                    if (user) {
+                        document.getElementById('user-id').innerText = user.userid;
+                        document.getElementById('name').innerText = user.name;
+                        document.getElementById('email').innerText = user.email;
+                        document.getElementById('contact-number').innerText = user.contact_number;
+                        document.getElementById('address').innerText = user.address;
+                        document.getElementById('birthday').innerText = user.birthday;
+                        document.getElementById('age').innerText = user.age;
+                        document.getElementById('username').innerText = user.username;
+                    } else {
+                        document.getElementById('user-info').innerText = 'User not found.';
+                    }
+                })
+                .catch(error => console.error('Error fetching user:', error));
+        }
+    </script>
 </head>
-
-<body>
-    <a id="name" href="profile.html" class="nav-link">
-        <?php echo $user['name']; ?>
-    </a>
-    <?php if ($user): ?>
-    <ul>
-        <li>User ID: <?php echo $user['userid']; ?></li>
-        <li>Email: <?php echo $user['email']; ?></li>
-        <li>Contact Number: <?php echo $user['contact_number']; ?></li>
-        <li>Address: <?php echo $user['address']; ?></li>
-        <li>Birthday: <?php echo $user['birthday']; ?></li>
-        <li>Age: <?php echo $user['age']; ?></li>
-        <li>Username: <?php echo $user['username']; ?></li>
+<body onload="onLoad()">
+    <h1>User Profile</h1>
+    <ul id="user-info">
+        <li>User ID: <span id="user-id"></span></li>
+        <li>Name: <span id="name"></span></li>
+        <li>Email: <span id="email"></span></li>
+        <li>Contact Number: <span id="contact-number"></span></li>
+        <li>Address: <span id="address"></span></li>
+        <li>Birthday: <span id="birthday"></span></li>
+        <li>Age: <span id="age"></span></li>
+        <li>Username: <span id="username"></span></li>
     </ul>
-    <?php else: ?>
-    <p>User not found.</p>
-    <?php endif; ?>
 </body>
-
 </html>

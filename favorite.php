@@ -1,3 +1,48 @@
+<?php
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['fullname'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$userid = $_SESSION['userid']; // Assuming you have stored the user_id in session when the user logged in
+
+// Database connection
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "bookvault"; // Update this with your database name
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch favorite books
+$favorites = [];
+$sql = "SELECT book.id, book.title, book.author, book.genre, book.summary 
+        FROM favorite
+        JOIN book ON favorite.book_id = book.id 
+        WHERE favorite.user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $userid);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        $favorites[] = $row;
+    }
+}
+
+$stmt->close();
+$conn->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,54 +51,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-    <title>Library</title>
+    <title>Favorite Books</title>
     <link rel="stylesheet" href="css/page_style.css">
-    <script>
-        const onLoad = () => {
-            document.getElementById("name").innerHTML = sessionStorage.getItem("fullname");
-
-            // Fetch books from server
-            fetch('fetch_books.php')
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.getElementById('booksTableBody');
-                    data.forEach(book => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${book.title}</td>
-                            <td>${book.author}</td>
-                            <td>${book.genre}</td>
-                            <td>${book.summary}</td>
-                            <td><a href="favorites.php?book_id=${book.id}" class="btn btn-primary">Add to Favorites</a></td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                })
-                .catch(error => console.error('Error fetching books:', error));
-        }
-    </script>
 </head>
-<body onload="onLoad()">
+<body>
 <div class="wrapper">
     <aside id="sidebar" class="expand">
         <div class="h-100">
             <div class="d-flex" id="system-info">
-                <a href="main.html" class="box_icon" type="button">
+                <a href="main.php" class="box_icon" type="button">
                     <i class="fa-solid fa-warehouse"></i>
                 </a>
                 <div class="sidebar-logo">
-                    <a href="main.html">Book Vault System</a>
+                    <a href="main.php">Book Vault System</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item">
-                    <a href="main.html" class="sidebar-link">
+                    <a href="main.php" class="sidebar-link">
                         <i class="fa-solid fa-book"></i>
                         <span>Library</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="favorites.php" class="sidebar-link">
                         <i class="fa-solid fa-table-list pe-1"></i>
                         <span>Favorite Books</span>
                     </a>
@@ -61,7 +82,7 @@
             </ul>
         </div>
         <button class="logout-button">
-            <a href="login.html" class="logout-button link-button">
+            <a href="logout.php" class="logout-button link-button">
                 <span>Logout</span>
                 <i class="fa-solid fa-right-from-bracket"></i>
             </a>
@@ -79,8 +100,8 @@
                         </form>
                     </li>
                     <li class="nav-item">
-                        <a id="name" href="profile.html" class="nav-link">
-                            Profile
+                        <a id="name" href="profile.php" class="nav-link">
+                            <?php echo htmlspecialchars($_SESSION['fullname']); ?>
                         </a>
                     </li>
                 </ul>
@@ -99,8 +120,16 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="booksTableBody">
-                            <!-- Book rows will be appended here by JavaScript -->
+                        <tbody id="favoritesTableBody">
+                            <?php foreach ($favorites as $book): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($book['title']); ?></td>
+                                    <td><?php echo htmlspecialchars($book['author']); ?></td>
+                                    <td><?php echo htmlspecialchars($book['genre']); ?></td>
+                                    <td><?php echo htmlspecialchars($book['summary']); ?></td>
+                                    <td><a href="remove_favorite.php?id=<?php echo $book['id']; ?>&userid=<?php echo $userid; ?>" class="btn btn-danger">Remove from Favorites</a></td>
+                                </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
@@ -110,6 +139,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlCOv7B2xP6KT6VhZKQFKA/VGPNSxZlNf6A/0oPzVJ+J5XicKpPzo3B4tW6" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cM03K5JdRmsKN/t8FzfGQ1ZXOlGIZ7Wv24e1LYD+47kxR/1D9t8L+BxNk3A2lQA5" crossorigin="anonymous"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cM03K5JdRmsKN/t8FzfGQ1ZXOlGIZ7Wv24e1LYD+47kxR/1D9t8L+BxNk3A2lQA5" crossorigin="anonymous"></script> -->
 </body>
 </html>
